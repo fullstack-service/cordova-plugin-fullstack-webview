@@ -714,6 +714,20 @@ NSTimer *timer;
     NSURL* url = [navigationAction.request URL];
     CDVViewController* vc = (CDVViewController*)self.viewController;
 
+    NSString *urlObserverPath = [settings cordovaSettingForKey:@"urlObserverPath"];
+    NSString *urlObserverRedirectPath = [settings cordovaSettingForKey:@"urlObserverRedirectPath"];
+
+    if (urlObserverPath != nil && urlObserverRedirectPath != nil && [trace containsString:urlObserverRedirectPath]) {
+        NSString *source = [NSString stringWithFormat:
+                        @"window.location.href=%@",
+                        urlObserverRedirectPath + "?url=" + url
+                        ];
+
+        return [[WKUserScript alloc] initWithSource:source
+                                  injectionTime:WKUserScriptInjectionTimeAtDocumentStart
+                               forMainFrameOnly:YES];
+    }
+
     /*
      * Give plugins the chance to handle the url
      */
