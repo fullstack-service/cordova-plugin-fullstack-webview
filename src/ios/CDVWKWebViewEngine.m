@@ -716,15 +716,23 @@ NSTimer *timer;
 
     NSDictionary* settings = self.commandDelegate.settings;
     NSString *urlObserverPath = [settings cordovaSettingForKey:@"urlObserverPath"];
-    NSString *urlObserverRedirectPath = [settings cordovaSettingForKey:@"urlObserverRedirectPath"];
+    NSString *urlObserverSuccess = [settings cordovaSettingForKey:@"urlObserverSuccess"];
+    NSString *urlObserverFail = [settings cordovaSettingForKey:@"urlObserverFail"];
 
-    if (urlObserverPath != nil && urlObserverRedirectPath != nil && [url.absoluteString containsString:urlObserverPath]) {
-        NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverRedirectPath, url];
-        NSString *source = [NSString stringWithFormat: @"window.location.href=%@", finalUrl];
+    if (urlObserverPath != nil && urlObserverSuccess != nil && [url.absoluteString containsString:urlObserverPath]) {
+        NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverSuccess, url];
+        NSString *source = [NSString stringWithFormat: @"window.location.href=\"%@\"", finalUrl];
 
-        [[WKUserScript alloc] initWithSource:source
-                                  injectionTime:WKUserScriptInjectionTimeAtDocumentStart
-                               forMainFrameOnly:YES];
+        WKWebView* wkWebView = (WKWebView*)_engineWebView;
+        [wkWebView evaluateJavaScript:source completionHandler:nil];
+    }
+
+    if (urlObserverPath != nil && urlObserverFail != nil && [url.absoluteString containsString:urlObserverPath]) {
+        NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverFail, url];
+        NSString *source = [NSString stringWithFormat: @"window.location.href=\"%@\"", finalUrl];
+
+        WKWebView* wkWebView = (WKWebView*)_engineWebView;
+        [wkWebView evaluateJavaScript:source completionHandler:nil];
     }
 
     /*
