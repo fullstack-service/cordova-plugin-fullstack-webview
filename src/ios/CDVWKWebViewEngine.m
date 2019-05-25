@@ -720,17 +720,17 @@ NSTimer *timer;
     NSString *urlObserverSuccess = [settings cordovaSettingForKey:@"urlObserverSuccess"];
     NSString *urlObserverFail = [settings cordovaSettingForKey:@"urlObserverFail"];
 
-    if (urlObserverSuccessPath != nil && urlObserverSuccess != nil && [url.absoluteString containsString:urlObserverSuccessPath]) {
+    if (urlObserverSuccessPath != nil && urlObserverSuccess != nil && [url.absoluteString containsString:urlObserverSuccessPath] && ![url.absoluteString containsString:@"ionic://"]) {
         NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverSuccess, url];
-        NSString *source = [NSString stringWithFormat: @"window.location.href=\"%@\"", finalUrl];
+        NSString *source = [NSString stringWithFormat: @"window.location.href=\"%@\";console.log(\"%@\")", finalUrl, finalUrl];
 
         WKWebView* wkWebView = (WKWebView*)_engineWebView;
         [wkWebView evaluateJavaScript:source completionHandler:nil];
     }
 
-    if (urlObserverFailPath != nil && urlObserverFail != nil && [url.absoluteString containsString:urlObserverFailPath]) {
+    if (urlObserverFailPath != nil && urlObserverFail != nil && [url.absoluteString containsString:urlObserverFailPath] && ![url.absoluteString containsString:@"ionic://"]) {
         NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverFail, url];
-        NSString *source = [NSString stringWithFormat: @"window.location.href=\"%@\"", finalUrl];
+        NSString *source = [NSString stringWithFormat: @"window.location.href=\"%@\";console.log(\"%@\")", finalUrl, finalUrl];
 
         WKWebView* wkWebView = (WKWebView*)_engineWebView;
         [wkWebView evaluateJavaScript:source completionHandler:nil];
