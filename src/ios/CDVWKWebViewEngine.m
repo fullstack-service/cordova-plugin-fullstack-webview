@@ -714,24 +714,33 @@ NSTimer *timer;
     NSURL* url = [navigationAction.request URL];
     CDVViewController* vc = (CDVViewController*)self.viewController;
 
+    /*
+     * Watch URL for success and fail redirects
+     */
     NSDictionary* settings = self.commandDelegate.settings;
     NSString *urlObserverSuccessPath = [settings cordovaSettingForKey:@"urlObserverSuccessPath"];
     NSString *urlObserverFailPath = [settings cordovaSettingForKey:@"urlObserverFailPath"];
     NSString *urlObserverSuccess = [settings cordovaSettingForKey:@"urlObserverSuccess"];
     NSString *urlObserverFail = [settings cordovaSettingForKey:@"urlObserverFail"];
-
+    
     if (urlObserverSuccessPath != nil && urlObserverSuccess != nil && [url.absoluteString containsString:urlObserverSuccessPath] && ![url.absoluteString containsString:@"ionic://"]) {
-        NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverSuccess, url];
-        NSString *source = [NSString stringWithFormat: @"window.location.href=\"%@\";if (window.webviewDispatchEvent) { window.webviewDispatchEvent(\"fs.loginSuccess\", {url: \"%@\"}); }", finalUrl, finalUrl];
-
+        NSString *urlStr = url.absoluteString;
+        urlStr = [urlStr stringByReplacingOccurrencesOfString:@"?" withString:@"||"];
+        
+        NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverSuccess, urlStr];
+        NSString *source = [NSString stringWithFormat: @"window.location.replace(\"%@\");", finalUrl];
+        
         WKWebView* wkWebView = (WKWebView*)_engineWebView;
         [wkWebView evaluateJavaScript:source completionHandler:nil];
     }
-
+    
     if (urlObserverFailPath != nil && urlObserverFail != nil && [url.absoluteString containsString:urlObserverFailPath] && ![url.absoluteString containsString:@"ionic://"]) {
-        NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverFail, url];
-        NSString *source = [NSString stringWithFormat: @"window.location.href=\"%@\";if (window.webviewDispatchEvent) { window.webviewDispatchEvent(\"fs.loginFail\", {url: \"%@\"}); }", finalUrl, finalUrl];
-
+        NSString *urlStr = url.absoluteString;
+        urlStr = [urlStr stringByReplacingOccurrencesOfString:@"?" withString:@"||"];
+        
+        NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverSuccess, urlStr];
+        NSString *source = [NSString stringWithFormat: @"window.location.replace(\"%@\");", finalUrl];
+        
         WKWebView* wkWebView = (WKWebView*)_engineWebView;
         [wkWebView evaluateJavaScript:source completionHandler:nil];
     }
