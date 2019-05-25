@@ -1,6 +1,6 @@
 {
-  "name": "cordova-plugin-fullstack-webview",
-  "version": "4.0.2",
+  "name": "cordova-plugin-fs-webview",
+  "version": "4.0.3",
   "description": "Fullstack Service Web View Engine Plugin",
   "scripts": {
     "sync_plugin_xml": "sync-cordova-xml package.json plugin.xml --output=plugin.xml",
