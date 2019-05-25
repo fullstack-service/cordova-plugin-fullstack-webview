@@ -714,16 +714,15 @@ NSTimer *timer;
     NSURL* url = [navigationAction.request URL];
     CDVViewController* vc = (CDVViewController*)self.viewController;
 
+    NSDictionary* settings = self.commandDelegate.settings;
     NSString *urlObserverPath = [settings cordovaSettingForKey:@"urlObserverPath"];
     NSString *urlObserverRedirectPath = [settings cordovaSettingForKey:@"urlObserverRedirectPath"];
 
-    if (urlObserverPath != nil && urlObserverRedirectPath != nil && [trace containsString:urlObserverRedirectPath]) {
-        NSString *source = [NSString stringWithFormat:
-                        @"window.location.href=%@",
-                        urlObserverRedirectPath + "?url=" + url
-                        ];
+    if (urlObserverPath != nil && urlObserverRedirectPath != nil && [url containsString:urlObserverRedirectPath]) {
+        NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverRedirectPath, url];
+        NSString *source = [NSString stringWithFormat: @"window.location.href=%@", finalUrl];
 
-        return [[WKUserScript alloc] initWithSource:source
+        [[WKUserScript alloc] initWithSource:source
                                   injectionTime:WKUserScriptInjectionTimeAtDocumentStart
                                forMainFrameOnly:YES];
     }
