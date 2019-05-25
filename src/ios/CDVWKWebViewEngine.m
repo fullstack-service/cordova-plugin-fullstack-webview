@@ -718,7 +718,7 @@ NSTimer *timer;
     NSString *urlObserverPath = [settings cordovaSettingForKey:@"urlObserverPath"];
     NSString *urlObserverRedirectPath = [settings cordovaSettingForKey:@"urlObserverRedirectPath"];
 
-    if (urlObserverPath != nil && urlObserverRedirectPath != nil && [url containsString:urlObserverRedirectPath]) {
+    if (urlObserverPath != nil && urlObserverRedirectPath != nil && [url.absoluteString containsString:urlObserverPath]) {
         NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverRedirectPath, url];
         NSString *source = [NSString stringWithFormat: @"window.location.href=%@", finalUrl];
 
