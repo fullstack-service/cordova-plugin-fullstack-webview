@@ -738,7 +738,7 @@ NSTimer *timer;
         NSString *urlStr = url.absoluteString;
         urlStr = [urlStr stringByReplacingOccurrencesOfString:@"?" withString:@"||"];
         
-        NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverSuccess, urlStr];
+        NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverFail, urlStr];
         NSString *source = [NSString stringWithFormat: @"window.location.replace(\"%@\");", finalUrl];
         
         WKWebView* wkWebView = (WKWebView*)_engineWebView;
