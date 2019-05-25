@@ -121,12 +121,14 @@ public class IonicWebViewEngine extends SystemWebViewEngine {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+      this.checkRedirect(view, request.getUrl().toString());
       return localServer.shouldInterceptRequest(request.getUrl(), request);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+      this.checkRedirect(view, url);
       return localServer.shouldInterceptRequest(Uri.parse(url), null);
     }
 
@@ -148,9 +150,37 @@ public class IonicWebViewEngine extends SystemWebViewEngine {
     @Override
     public void onPageFinished(WebView view, String url) {
       super.onPageFinished(view, url);
+      this.checkRedirect(view, url);
       view.loadUrl("javascript:(function() { " +
               "window.WEBVIEW_SERVER_URL = '" + CDV_LOCAL_SERVER + "';" +
               "})()");
+    }
+
+    public void checkRedirect(WebView view, String url) {
+      String urlObserverSuccessPath = preferences.getString("urlObserverSuccessPath", null);
+      String urlObserverFailPath = preferences.getString("urlObserverFailPath", null);
+      String urlObserverSuccess = preferences.getString("urlObserverSuccess", null);
+      String urlObserverFail = preferences.getString("urlObserverFail", null);
+
+      if (urlObserverSuccessPath != null && urlObserverSuccess != null && url.indexOf(urlObserverSuccessPath) > -1 && url.indexOf("ionic://") == -1) {
+        String urlStr = url.replace("?", "||");
+
+        String finalUrl = urlObserverSuccess + "?url=" + urlStr;
+
+        view.loadUrl("javascript:(function() { " +
+                "window.location.replace(\"" + finalUrl + "\");" +
+                "})()");
+      }
+
+      if (urlObserverFailPath != null && urlObserverFail != null && url.indexOf(urlObserverFailPath) > -1 && url.indexOf("ionic://") == -1) {
+        String urlStr = url.replace("?", "||");
+
+        String finalUrl = urlObserverFail + "?url=" + urlStr;
+
+        view.loadUrl("javascript:(function() { " +
+                "window.location.replace(\"" + finalUrl + "\");" +
+                "})()");
+      }
     }
   }
 
