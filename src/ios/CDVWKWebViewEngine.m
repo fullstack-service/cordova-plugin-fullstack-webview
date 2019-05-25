@@ -715,11 +715,12 @@ NSTimer *timer;
     CDVViewController* vc = (CDVViewController*)self.viewController;
 
     NSDictionary* settings = self.commandDelegate.settings;
-    NSString *urlObserverPath = [settings cordovaSettingForKey:@"urlObserverPath"];
+    NSString *urlObserverSuccessPath = [settings cordovaSettingForKey:@"urlObserverSuccessPath"];
+    NSString *urlObserverFailPath = [settings cordovaSettingForKey:@"urlObserverFailPath"];
     NSString *urlObserverSuccess = [settings cordovaSettingForKey:@"urlObserverSuccess"];
     NSString *urlObserverFail = [settings cordovaSettingForKey:@"urlObserverFail"];
 
-    if (urlObserverPath != nil && urlObserverSuccess != nil && [url.absoluteString containsString:urlObserverPath]) {
+    if (urlObserverSuccessPath != nil && urlObserverSuccess != nil && [url.absoluteString containsString:urlObserverSuccessPath]) {
         NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverSuccess, url];
         NSString *source = [NSString stringWithFormat: @"window.location.href=\"%@\"", finalUrl];
 
@@ -727,7 +728,7 @@ NSTimer *timer;
         [wkWebView evaluateJavaScript:source completionHandler:nil];
     }
 
-    if (urlObserverPath != nil && urlObserverFail != nil && [url.absoluteString containsString:urlObserverPath]) {
+    if (urlObserverFailPath != nil && urlObserverFail != nil && [url.absoluteString containsString:urlObserverFailPath]) {
         NSString *finalUrl = [NSString stringWithFormat:@"%@?url=%@", urlObserverFail, url];
         NSString *source = [NSString stringWithFormat: @"window.location.href=\"%@\"", finalUrl];
 
